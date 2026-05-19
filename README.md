@@ -24,18 +24,6 @@ Uploads your images to WaveSpeed's CDN, generates detailed text captions via the
 
 ## Installation
 
-### Option A — Automatic (recommended)
-
-Run the one-shot installer. It creates a virtual environment, installs all dependencies (`wavespeed`, `Pillow`, `python-dotenv`), and sets up the `lora-db/` folder:
-
-```bash
-python install.py
-```
-
-That's it. Follow the on-screen instructions at the end.
-
-### Option B — Manual
-
 ```bash
 # 1. Create and activate a virtual environment
 python -m venv .venv
@@ -50,9 +38,18 @@ source .venv/bin/activate
 .venv\Scripts\Activate.ps1
 
 # 2. Install dependencies
-pip install wavespeed>=1.0.8 Pillow>=10.0.0 python-dotenv>=1.0.0
+pip install -r requirements.txt
 
 # 3. Create the image directory
+mkdir lora-db
+```
+
+or if you dont care about packages being installed to your global python installation:
+```bash
+# Install required dependencies
+pip install -r requirements.txt
+
+# Create the image directory
 mkdir lora-db
 ```
 
@@ -65,6 +62,7 @@ Copy `.env.example` to `.env` and fill in your details:
 ```bash
 cp .env.example .env
 ```
+or manually rename to ".env" (no file extension)
 
 ```dotenv
 # Required
@@ -78,11 +76,15 @@ CAPTION_DETAIL_LEVEL=medium    # low | medium | high
 API_SLEEP_SECONDS=2.0
 ```
 
-> **Never commit `.env` to version control.** The installer adds it to `.gitignore` automatically.
-
 ---
 
 ## Usage
+
+### Warning:
+If you want to add a trigger word, use `add_trigger_word.py`.
+It is NEVER activated automatically by the workflow below. 
+It's a standalone tool to add the same trigger word at the beggining to all `.txt` files in `/lora-db`.
+It is to be run manually at step 4.
 
 ### Typical workflow
 
@@ -95,7 +97,8 @@ The tool will:
 1. Show you what images it found in `lora-db/`
 2. Upload any that aren't cached (or whose cache has expired)
 3. Generate captions, writing `IMG_001.txt` next to each `IMG_001.jpg`
-4. Ask if you want to pack the images into a ZIP
+4. NOT  run `python add_trigger_word.py`. (You have to run it manually if you want to add a trigger word)
+5. Ask if you want to pack the images into a ZIP
 
 ### All CLI flags
 
